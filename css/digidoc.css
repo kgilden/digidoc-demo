@@ -1,0 +1,39 @@
+
+html, body {
+    width: 100%;
+}
+
+.flash-success {
+    color: #00AA00;
+}
+
+.flash-error {
+    color: #AA0000;
+}
+
+.monospaced {
+    font-family: monospace;
+    word-wrap: break-word;
+}
+
+.digidoc-container textarea {
+    width: 100%;
+    resize: vertical;
+}
+
+.digidoc-container td {
+    vertical-align: top;
+}
+
+.digidoc-container-files, .digidoc-container-signatures {
+    table-layout: fixed;
+}
+
+.digidoc-signature-id {
+    width: 30px;
+}
+
+.digidoc-signature-cert-signature {
+    font-size: .8em;
+    width: 60%;
+}

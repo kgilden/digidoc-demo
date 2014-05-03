@@ -1,0 +1,15 @@
+{
+    "name": "kgilden/digidoc-demo",
+    "description": "A simple site to demo kgilden/php-digidoc",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kristen Gilden",
+            "email": "kristen.gilden@gmail.com"
+        }
+    ],
+    "require": {
+        "silex/silex": "~1.2",
+        "kgilden/php-digidoc": "0.1.*@dev"
+    }
+}
