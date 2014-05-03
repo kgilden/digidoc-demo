@@ -14,13 +14,13 @@ todo: finish the readme
     $ php composer.phar install
     ```
 
-2.  Start the PHP built-in server
+2.  Start the [PHP built-in server](http://www.php.net/manual/en/features.commandline.webserver.php)
 
     ```
     $ php -S localhost:8080
     ```
 
-3.  Start up stunnel (signing won't work without TLS enabled)
+3.  Start up [stunnel](http://stunnel.org/) (signing won't work without TLS enabled)
 
     ```
      $ stunnel -d 4443 -f -r 8080 -p /path/to/pemfile.pem -P /tmp/stunnel.pid
