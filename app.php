@@ -95,6 +95,47 @@ $app->post('/container/create', function (Request $request) use ($app) {
     return redirectTo($app, 'home');
 })->bind('create');
 
+$app->post('/container/delete', function (Request $request) use ($app) {
+    unlink(getTempDir($request));
+
+    $container = $request->getSession()->remove('container');
+
+    $app['digidoc.api']->close($container);
+
+    die('foo');
+
+    $request->getSession()->getFlashBag()->add('success', 'Konteiner kustutati edukalt.');
+
+    return redirectTo($app, 'home');
+})->bind('delete');
+
+$app->get('/container.bdoc', function (Request $request) use ($app) {
+    $container = $request->getSession()->get('container');
+
+    $api = $app['digidoc.api'];
+    $api->merge($container);
+    $api->write($container, $path = getTempDir($request).'/container.bdoc');
+
+    return new BinaryFileResponse($path);
+})->bind('download');
+
+$app->post('/container/add-signature', function (Request $request) use ($app) {
+    $session = $request->getSession();
+
+    $cert = $request->request->get('cert', array());
+
+    $api = $app['digidoc.api'];
+    $api->merge($container = $session->get('container'));
+
+    $container->addSignature(new Signature($cert['id'], $cert['signature']));
+
+    $api->update($container);
+
+    $session->getFlashBag()->add('success', 'Konteinerile lisati allkiri serdi id-ga '.$certId);
+
+    return redirectTo($app, 'home');
+})->bind('add_signature');
+
 /**
  * Seals a specific signature of the container. The documentation calls this
  * process as signature finalizing.
@@ -146,47 +187,6 @@ $app->post('/container/add-file', function (Request $request) use ($app) {
 
     return redirectTo($app, 'home');
 })->bind('add_file');
-
-$app->post('/container/add-signature', function (Request $request) use ($app) {
-    $session = $request->getSession();
-
-    $cert = $request->request->get('cert', array());
-
-    $api = $app['digidoc.api'];
-    $api->merge($container = $session->get('container'));
-
-    $container->addSignature(new Signature($cert['id'], $cert['signature']));
-
-    $api->update($container);
-
-    $session->getFlashBag()->add('success', 'Konteinerile lisati allkiri serdi id-ga '.$certId);
-
-    return redirectTo($app, 'home');
-})->bind('add_signature');
-
-$app->post('/container/delete', function (Request $request) use ($app) {
-    unlink(getTempDir($request));
-
-    $container = $request->getSession()->remove('container');
-
-    $app['digidoc.api']->close($container);
-
-    die('foo');
-
-    $request->getSession()->getFlashBag()->add('success', 'Konteiner kustutati edukalt.');
-
-    return redirectTo($app, 'home');
-})->bind('delete');
-
-$app->get('/container.bdoc', function (Request $request) use ($app) {
-    $container = $request->getSession()->get('container');
-
-    $api = $app['digidoc.api'];
-    $api->merge($container);
-    $api->write($container, $path = getTempDir($request).'/container.bdoc');
-
-    return new BinaryFileResponse($path);
-})->bind('download');
 
 $app->run();
 
