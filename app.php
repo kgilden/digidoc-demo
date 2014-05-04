@@ -95,27 +95,39 @@ $app->post('/container/create', function (Request $request) use ($app) {
     return redirectTo($app, 'home');
 })->bind('create');
 
+/**
+ * Deletes the DigiDoc container from the current session as well as from the
+ * DigiDoc service.
+ */
 $app->post('/container/delete', function (Request $request) use ($app) {
+    // Removes the entire temporariy directory related to the current user's session.
     unlink(getTempDir($request));
 
+    // Removes the container object itself from the session.
     $container = $request->getSession()->remove('container');
 
+    // Also closes the remote session with the DigiDoc service.
     $app['digidoc.api']->close($container);
-
-    die('foo');
 
     $request->getSession()->getFlashBag()->add('success', 'Konteiner kustutati edukalt.');
 
+    // Redirects the client back home so that refreshing wouldn't post the same
+    // request again.
     return redirectTo($app, 'home');
 })->bind('delete');
 
 $app->get('/container.bdoc', function (Request $request) use ($app) {
-    $container = $request->getSession()->get('container');
+    if (!($container = $request->getSession()->get('container'))) {
+        // Redirects the client back home, if no container is in the session.
+        return redirectTo($app, 'home');
+    }
 
+    // The container has to be merged with the API before writing to disk.
     $api = $app['digidoc.api'];
     $api->merge($container);
     $api->write($container, $path = getTempDir($request).'/container.bdoc');
 
+    // BinaryFileResponse represents an HTTP response delivering a file.
     return new BinaryFileResponse($path);
 })->bind('download');
 
