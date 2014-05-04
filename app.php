@@ -131,7 +131,7 @@ $app->get('/container.bdoc', function (Request $request) use ($app) {
     return new BinaryFileResponse($path);
 })->bind('download');
 
-$app->post('/container/add-signature', function (Request $request) use ($app) {
+$app->post('/container/signature/add', function (Request $request) use ($app) {
     $session = $request->getSession();
 
     $cert = $request->request->get('cert', array());
@@ -159,7 +159,7 @@ $app->post('/container/add-signature', function (Request $request) use ($app) {
  *
  * No validation is being done here to keep it short and to the point.
  */
-$app->post('/container/seal-signature', function (Request $request) use ($app) {
+$app->post('/container/signature/seal', function (Request $request) use ($app) {
     $container = $request->getSession()->get('container');
 
     // Gets the signature from the cotnainer with its id and injects the
@@ -182,7 +182,7 @@ $app->post('/container/seal-signature', function (Request $request) use ($app) {
 /**
  * Adds a new file to the current container.
  */
-$app->post('/container/add-file', function (Request $request) use ($app) {
+$app->post('/container/file/add', function (Request $request) use ($app) {
     $session = $request->getSession();
 
     $file = $request->files->get('file');
