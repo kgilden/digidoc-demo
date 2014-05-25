@@ -101,7 +101,7 @@ $app->post('/container/create', function (Request $request) use ($app) {
  */
 $app->post('/container/delete', function (Request $request) use ($app) {
     // Removes the entire temporariy directory related to the current user's session.
-    unlink(getTempDir($request));
+    removeDir(getTempDir($request));
 
     // Removes the container object itself from the session.
     $container = $request->getSession()->remove('container');
@@ -174,7 +174,7 @@ $app->post('/container/signature/seal', function (Request $request) use ($app) {
     // to create all its files and signatures again.
     $app['digidoc.api']->update($container, true);
 
-    $session->getFlashBag()->add('success', 'Allkirja kinnitamine õnnestus!');
+    $request->getSession()->getFlashBag()->add('success', 'Allkirja kinnitamine õnnestus!');
 
     return redirectTo($app, 'home');
 })->bind('seal_signature');
@@ -210,6 +210,35 @@ function getTempDir(Request $request)
 function redirectTo($app, $route, $routeParams = array())
 {
     return new RedirectResponse($app['url_generator']->generate($route, $routeParams));
+}
+
+/**
+ * Recursively removes a directory and its contents. Source:
+ * http://stackoverflow.com/questions/3349753#3349792
+ *
+ * @param string $path  Path to the directory to be removed.
+ */
+function removeDir($path)
+{
+    if (!is_dir($path)) {
+        throw new \InvalidArgumentException(sprintf('$path must be a directory, got %s.', $path));
+    }
+
+    if (substr($path, strlen($path) - 1, 1) !== '/') {
+        $path .= '/';
+    }
+
+    $files = glob($path, '*', GLOB_MARK);
+
+    foreach ($files as $file) {
+        if (is_dir($file)) {
+            removeDir($file);
+        } else {
+            unlink($file);
+        }
+    }
+
+    rmdir($path);
 }
 
 function renderTemplate($path, $arguments)
