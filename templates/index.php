@@ -125,7 +125,7 @@
 
     <hr />
 
-    <form class="form" method="post" action="<?php $app['url_generator']->generate('create') ?>" enctype="multipart/form-data">
+    <form class="form" method="post" action="<?php echo $app['url_generator']->generate('create') ?>" enctype="multipart/form-data">
 
         <h2>Uus konteiner</h1>
 
