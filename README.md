@@ -1,9 +1,10 @@
 DigiDoc demo site
 =================
 
-todo: finish the readme
+This is a small Silex-based site to demonstrate the workings of
+[php-digidoc](https://github.com/kgilden/php-digidoc).
 
-## Usage
+## Setup
 
 1.  Install dependencies using [Composer](https://getcomposer.org/)
 
